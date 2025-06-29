@@ -9,7 +9,7 @@ import api from './services/api';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [showRegister, setShowRegister] = useState(false)
+  const [showRegister, setShowRegister] = useState(false);
   const [beneficiarios, setBeneficiarios] = useState([]);
 
   useEffect(() => {
@@ -30,35 +30,37 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  const handleLogin = async (username, password) => {
+  const handleLogin = async (email, password) => {
     try {
-      // ✅ USAR POST (no GET)
-      const res = await api.post('/users/login', { username, password });
+      const res = await api.post('/users/login', { email, password });
 
-      if (res.data.success) {
-        localStorage.setItem('token', res.data.token); // Guarda token
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
         setIsLoggedIn(true);
       } else {
         alert('Usuário ou senha inválidos');
       }
     } catch (err) {
-      alert('Erro ao fazer login');
+      alert(err.response?.data?.error || 'Erro ao fazer login');
       console.error(err);
     }
   };
 
-  const handleRegister = async (name, email, password) => {
+  const handleRegister = async (username, email, password) => {
   try {
-    const res = await api.post('/users/register', { name, email, password });
+    // Enviar solicitud POST al backend con los datos del formulario
+    const res = await api.post('/users/register', { username, email, password });
 
+    // Si se recibió un token, guardar en localStorage y loguear el usuario
     if (res.data.token) {
-      localStorage.setItem('token', res.data.token);
-      setIsLoggedIn(true);
-      setShowRegister(false);
+      localStorage.setItem('token', res.data.token);  // 🔐 Guarda el token JWT
+      setIsLoggedIn(true);                            // ✅ Usuario logueado
+      setShowRegister(false);                         // 👈 Cierra la tela de cadastro
     } else {
-      alert('Erro ao registrar usuário');
+      alert('Erro ao registrar usuário');             // ⚠️ Algo inesperado ocurrió
     }
   } catch (err) {
+    // Mostrar el mensaje de error que devuelve el backend, o genérico si no existe
     alert(err.response?.data?.error || 'Erro ao registrar usuário');
   }
 };
@@ -70,19 +72,18 @@ function App() {
   };
 
   if (!isLoggedIn) {
-  return showRegister ? (
-    <RegisterScreen
-      onRegister={handleRegister}
-      onShowLogin={() => setShowRegister(false)}
-    />
-  ) : (
-    <LoginScreen
-      onLogin={handleLogin}
-      onShowRegister={() => setShowRegister(true)}
-    />
-  );
-}
-
+    return showRegister ? (
+      <RegisterScreen
+        onRegister={handleRegister}
+        onShowLogin={() => setShowRegister(false)}
+      />
+    ) : (
+      <LoginScreen
+        onLogin={handleLogin}
+        onShowRegister={() => setShowRegister(true)}
+      />
+    );
+  }
 
   return (
     <Router>

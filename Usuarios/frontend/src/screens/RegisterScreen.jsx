@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 function RegisterScreen({ onRegister, onShowLogin }) {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,15 +12,15 @@ function RegisterScreen({ onRegister, onShowLogin }) {
     setError('');
     setMessage('');
 
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       setError('Preencha todos os campos');
       return;
     }
 
     try {
-      await onRegister(name, email, password);
+      await onRegister(username, email, password);
       setMessage('Usuário registrado com sucesso!');
-      setName('');
+      setUsername('');
       setEmail('');
       setPassword('');
     } catch (err) {
@@ -36,9 +36,9 @@ function RegisterScreen({ onRegister, onShowLogin }) {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
-            placeholder="Nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="Usuário"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="border px-3 py-2 rounded"
           />
           <input

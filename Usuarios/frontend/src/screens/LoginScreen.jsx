@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import fundoLogin from '../assets/fundo-login.jpg'; // Asegúrate que la imagen exista
 
 function LoginScreen({ onLogin, onShowRegister }) {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
 
@@ -10,16 +10,16 @@ function LoginScreen({ onLogin, onShowRegister }) {
     e.preventDefault();
     setErro('');
 
-    if (!username || !password) {
+    if (!email || !password) {
       setErro('Preencha todos os campos');
       return;
     }
 
     try {
-      await onLogin(username, password);
+      await onLogin(email, password);
 
       // Limpiar campos después de login exitoso
-      setUsername('');
+      setEmail('');
       setPassword('');
     } catch (err) {
       setErro('Erro ao fazer login');
@@ -41,15 +41,17 @@ function LoginScreen({ onLogin, onShowRegister }) {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input
-              type="text"
-              placeholder="Usuário (admin)"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              type="email"
+              placeholder="Email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="border px-3 py-2 rounded"
             />
             <input
               type="password"
-              placeholder="Senha (admin)"
+              placeholder="Senha"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="border px-3 py-2 rounded"
