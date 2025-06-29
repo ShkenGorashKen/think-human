@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginScreen from './screens/LoginScreen';
+import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import BeneficiariosScreen from './screens/BeneficiariosScreen';
 import Navbar from './components/Navbar';
@@ -8,6 +9,7 @@ import api from './services/api';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showRegister, setShowRegister] = useState(false)
   const [beneficiarios, setBeneficiarios] = useState([]);
 
   useEffect(() => {
@@ -45,14 +47,42 @@ function App() {
     }
   };
 
+  const handleRegister = async (name, email, password) => {
+  try {
+    const res = await api.post('/users/register', { name, email, password });
+
+    if (res.data.token) {
+      localStorage.setItem('token', res.data.token);
+      setIsLoggedIn(true);
+      setShowRegister(false);
+    } else {
+      alert('Erro ao registrar usuário');
+    }
+  } catch (err) {
+    alert(err.response?.data?.error || 'Erro ao registrar usuário');
+  }
+};
+
+
   const handleLogout = () => {
     setIsLoggedIn(false);
     localStorage.removeItem('token');
   };
 
   if (!isLoggedIn) {
-    return <LoginScreen onLogin={handleLogin} />;
-  }
+  return showRegister ? (
+    <RegisterScreen
+      onRegister={handleRegister}
+      onShowLogin={() => setShowRegister(false)}
+    />
+  ) : (
+    <LoginScreen
+      onLogin={handleLogin}
+      onShowRegister={() => setShowRegister(true)}
+    />
+  );
+}
+
 
   return (
     <Router>

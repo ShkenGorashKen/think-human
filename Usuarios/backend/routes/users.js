@@ -1,80 +1,42 @@
 const express = require('express');
 const router = express.Router();
-const sqlite3 = require('sqlite3').verbose();
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('./db/database.sqlite');
-const SECRET_KEY = 'segredo_super_secreto'; // 💡 Puedes mover esto a .env
+const SECRET_KEY = 'segredo_super_secreto'; // Usa la misma que en el middleware
 
-// 🔐 LOGIN
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
+router.post('/register', (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ error: 'Por favor complete todos los campos' });
+  }
 
-  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, user) => {
-    if (err) return res.status(500).json({ error: err.message });
+  // Verificar si email ya existe
+  db.get('SELECT * FROM users WHERE email = ?', [email], (err, row) => {
+    if (err) return res.status(500).json({ error: 'Erro no banco de dados' });
+    if (row) return res.status(400).json({ error: 'Email já cadastrado' });
 
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'Credenciais inválidas' });
-    }
+    // Encriptar senha
+    bcrypt.hash(password, 10, (err, hash) => {
+      if (err) return res.status(500).json({ error: 'Erro ao encriptar senha' });
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return res.status(401).json({ success: false, message: 'Senha incorreta' });
-    }
+      // Insertar usuario
+      const sql = 'INSERT INTO users (name, email, password) VALUES (?, ?, ?)';
+      db.run(sql, [name, email, hash], function(err) {
+        if (err) return res.status(500).json({ error: 'Erro ao salvar usuário' });
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      SECRET_KEY,
-      { expiresIn: '2h' }
-    );
+        // Crear token JWT
+        const token = jwt.sign({ id: this.lastID, email }, SECRET_KEY, { expiresIn: '24h' });
 
-    res.json({
-      success: true,
-      user: { id: user.id, username: user.username },
-      token
-    });
-  });
-});
-
-// 📝 REGISTRO
-router.post('/register', async (req, res) => {
-  const { username, password } = req.body;
-
-  if (!username || !password)
-    return res.status(400).json({ success: false, message: 'Campos obrigatórios' });
-
-  // Verifica se usuário já existe
-  db.get('SELECT * FROM users WHERE username = ?', [username], async (err, row) => {
-    if (err) return res.status(500).json({ success: false, message: 'Erro no servidor' });
-
-    if (row) {
-      return res.status(400).json({ success: false, message: 'Usuário já existe' });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    db.run(
-      'INSERT INTO users (username, password) VALUES (?, ?)',
-      [username, hashedPassword],
-      function (err) {
-        if (err) {
-          return res.status(500).json({ success: false, message: 'Erro ao registrar' });
-        }
-
-        const token = jwt.sign(
-          { id: this.lastID, username },
-          SECRET_KEY,
-          { expiresIn: '2h' }
-        );
-
-        res.status(201).json({
-          success: true,
-          user: { id: this.lastID, username },
-          token
+        res.json({
+          message: 'Usuário registrado com sucesso',
+          token,
+          user: { id: this.lastID, name, email }
         });
-      }
-    );
+      });
+    });
   });
 });
 

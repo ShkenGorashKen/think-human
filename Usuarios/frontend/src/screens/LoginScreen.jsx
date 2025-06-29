@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import fundoLogin from '../assets/fundo-login.jpg'; // Asegúrate de que la imagen exista
+import fundoLogin from '../assets/fundo-login.jpg'; // Asegúrate que la imagen exista
 
-function LoginScreen({ onLogin }) {
+function LoginScreen({ onLogin, onShowRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
@@ -18,7 +18,7 @@ function LoginScreen({ onLogin }) {
     try {
       await onLogin(username, password);
 
-      // ✅ Limpiar campos después de login exitoso
+      // Limpiar campos después de login exitoso
       setUsername('');
       setPassword('');
     } catch (err) {
@@ -63,7 +63,13 @@ function LoginScreen({ onLogin }) {
           </form>
 
           <p className="text-center text-sm text-gray-600 mt-4">
-            Não tem uma conta? <span className="text-blue-600 hover:underline cursor-pointer">Cadastre-se</span>
+            Não tem uma conta?{' '}
+            <span
+              className="text-blue-600 hover:underline cursor-pointer"
+              onClick={onShowRegister}
+            >
+              Cadastre-se
+            </span>
           </p>
         </div>
       </div>
