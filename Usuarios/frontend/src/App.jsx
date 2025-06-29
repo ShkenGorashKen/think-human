@@ -4,8 +4,12 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import DashboardScreen from './screens/DashboardScreen';
 import BeneficiariosScreen from './screens/BeneficiariosScreen';
-import Navbar from './components/Navbar';
+import CadastrarScreen from './screens/CadastrarScreen';
+import SobreScreen from './screens/SobreScreen';
+import Navbar from './components/Navbar'; // menú superior con navegación
 import api from './services/api';
+import Footer from './components/Footer';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,24 +51,20 @@ function App() {
   };
 
   const handleRegister = async (username, email, password) => {
-  try {
-    // Enviar solicitud POST al backend con los datos del formulario
-    const res = await api.post('/users/register', { username, email, password });
+    try {
+      const res = await api.post('/users/register', { username, email, password });
 
-    // Si se recibió un token, guardar en localStorage y loguear el usuario
-    if (res.data.token) {
-      localStorage.setItem('token', res.data.token);  // 🔐 Guarda el token JWT
-      setIsLoggedIn(true);                            // ✅ Usuario logueado
-      setShowRegister(false);                         // 👈 Cierra la tela de cadastro
-    } else {
-      alert('Erro ao registrar usuário');             // ⚠️ Algo inesperado ocurrió
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        setIsLoggedIn(true);
+        setShowRegister(false);
+      } else {
+        alert('Erro ao registrar usuário');
+      }
+    } catch (err) {
+      alert(err.response?.data?.error || 'Erro ao registrar usuário');
     }
-  } catch (err) {
-    // Mostrar el mensaje de error que devuelve el backend, o genérico si no existe
-    alert(err.response?.data?.error || 'Erro ao registrar usuário');
-  }
-};
-
+  };
 
   const handleLogout = () => {
     setIsLoggedIn(false);
@@ -91,7 +91,12 @@ function App() {
       <Routes>
         <Route path="/" element={<DashboardScreen beneficiarios={beneficiarios} />} />
         <Route path="/beneficiarios" element={<BeneficiariosScreen />} />
+        <Route path="/cadastrar" element={<CadastrarScreen />} />
+        <Route path="/sobre" element={<SobreScreen />} />
       </Routes>
+
+      <Footer />
+      
     </Router>
   );
 }

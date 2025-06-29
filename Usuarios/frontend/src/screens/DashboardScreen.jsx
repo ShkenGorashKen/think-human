@@ -15,12 +15,7 @@ function DashboardScreen({ beneficiarios, onLogout }) {
       <div className="max-w-5xl mx-auto bg-white shadow-md rounded-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-semibold text-gray-800">Dashboard</h1>
-          <button
-            onClick={onLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
-          >
-            Sair
-          </button>
+          
         </div>
 
         <p className="text-gray-600 text-lg mb-4">
