@@ -1,28 +1,24 @@
 // src/screens/DashboardScreen.jsx
+
+// 📦 Importa React y componentes gráficos desde 'recharts'.
+// 📦 Importa o React e os componentes gráficos do 'recharts'.
 import React from 'react'
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  LabelList,          // ← Importa LabelList aquí
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, Tooltip, Legend, LabelList,
+  PieChart, Pie, Cell, ResponsiveContainer
 } from 'recharts'
 
-const BAR_COLORS = [
-  '#4F46E5', '#A78BFA', '#C4B5FD',
-  '#C084FC', '#9371FF', '#D8B4FE'
-]
+// 🎨 Colores personalizados para los gráficos de barras y pastel.
+// 🎨 Cores personalizadas para os gráficos de barras e pizza.
+const BAR_COLORS = ['#4F46E5', '#A78BFA', '#C4B5FD', '#C084FC', '#9371FF', '#D8B4FE']
 const PIE_COLORS = ['#4F46E5', '#A78BFA', '#C4B5FD']
-const MAX_BENEFICIARIOS = 100
+const MAX_BENEFICIARIOS = 100 // Límite para el gráfico de progreso
 
+// 🎯 Componente principal del dashboard (tablero de visualización).
+// 🎯 Componente principal do dashboard (painel de visualização).
 export default function DashboardScreen({ beneficiarios, onLogout }) {
-  // Agrupa datos por campo
+  // Agrupa beneficiarios por tipo de ayuda y situación social.
+  // Agrupa beneficiários por tipo de ajuda e situação social.
   const tipoData = contarPorCampo(beneficiarios, 'tipoDeAjuda')
   const situData = contarPorCampo(beneficiarios, 'situacaoSocial')
   const total    = beneficiarios.length
@@ -31,22 +27,20 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          
-          
-        </div>
 
-        {/* Total de beneficiarios */}
+        {/* 🧮 Total de beneficiarios */}
+        {/* 🧮 Total de beneficiários */}
         <p className="text-gray-600 text-lg mb-4">
           Total de Beneficiários:{' '}
           <span className="font-bold text-gray-900">{total}</span>
         </p>
 
-        {/* Gráficas y barra de progreso */}
+        {/* 📊 Sección de gráficos y progreso */}
+        {/* 📊 Seção de gráficos e progresso */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          
-          {/* Gráfico de Barras */}
+
+          {/* 📘 Gráfico de Barras: Tipo de Ayuda */}
+          {/* 📘 Gráfico de Barras: Tipo de Ajuda */}
           <div className="bg-white p-6 rounded-lg shadow h-96">
             <h2 className="text-xs uppercase text-gray-500 mb-4">
               Beneficiários por Tipo de Ajuda
@@ -67,7 +61,6 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
                   width={40}
                 />
                 <Tooltip />
-                {/* Leyenda con tipos de ayuda */}
                 <Legend
                   verticalAlign="bottom"
                   align="center"
@@ -79,18 +72,10 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
                     color: BAR_COLORS[idx % BAR_COLORS.length]
                   }))}
                 />
-                <Bar
-                  dataKey="value"
-                  barSize={30}
-                  radius={[6, 6, 0, 0]}
-                >
+                <Bar dataKey="value" barSize={30} radius={[6, 6, 0, 0]}>
                   {tipoData.map((_, idx) => (
-                    <Cell
-                      key={`cell-${idx}`}
-                      fill={BAR_COLORS[idx % BAR_COLORS.length]}
-                    />
+                    <Cell key={`cell-${idx}`} fill={BAR_COLORS[idx % BAR_COLORS.length]} />
                   ))}
-                  {/* Muestra la cantidad encima de cada barra */}
                   <LabelList
                     dataKey="value"
                     position="top"
@@ -101,7 +86,8 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
             </ResponsiveContainer>
           </div>
 
-          {/* Gráfico de Pie */}
+          {/* 🟣 Gráfico de Pastel: Situación Social */}
+          {/* 🟣 Gráfico de Pizza: Situação Social */}
           <div className="bg-white p-6 rounded-lg shadow h-96">
             <h2 className="text-xs uppercase text-gray-500 mb-4">
               Beneficiários por Situação Social
@@ -120,10 +106,7 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
                   label={({ percent }) => `${(percent * 100).toFixed(0)}%`}
                 >
                   {situData.map((_, idx) => (
-                    <Cell
-                      key={`slice-${idx}`}
-                      fill={PIE_COLORS[idx % PIE_COLORS.length]}
-                    />
+                    <Cell key={`slice-${idx}`} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip />
@@ -142,7 +125,8 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
             </ResponsiveContainer>
           </div>
 
-          {/* Barra de Progreso */}
+          {/* 📈 Barra de Progreso General */}
+          {/* 📈 Barra de Progresso Geral */}
           <div className="lg:col-span-2 bg-white p-6 rounded-lg shadow">
             <h2 className="text-xs uppercase text-gray-500 mb-2">
               Progresso Total de Beneficiários
@@ -163,7 +147,8 @@ export default function DashboardScreen({ beneficiarios, onLogout }) {
   )
 }
 
-// Función helper para agrupar datos
+// 🔧 Función auxiliar para agrupar datos por clave y contar ocurrencias.
+// 🔧 Função auxiliar para agrupar dados por chave e contar ocorrências.
 function contarPorCampo(data, campo) {
   const mapa = {}
   data.forEach(item => {

@@ -6,13 +6,13 @@
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^0.525.0"
   },
-  
   "scripts": {
-  "start": "react-scripts start && echo ✅ Frontend disponível em http://localhost:3000",
-  "build": "react-scripts build",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject"
-}
+    "start": "react-scripts start && echo ✅ Frontend disponível em http://localhost:3000",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  }
 }

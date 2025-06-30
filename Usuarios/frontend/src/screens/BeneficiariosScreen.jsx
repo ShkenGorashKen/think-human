@@ -1,9 +1,23 @@
 // src/screens/BeneficiariosScreen.jsx
+
+// Importa React y hooks para manejar estado y ciclo de vida.
+// Importa o React e os hooks para gerenciar estado e ciclo de vida.
 import React, { useState, useEffect } from 'react'
+
+// Servicio de API preconfigurado (baseURL y headers).
+// Serviço de API pré-configurado (baseURL e headers).
 import api from '../services/api'
+
+// Biblioteca para mostrar mensajes flotantes.
+// Biblioteca para exibir mensagens flutuantes.
 import { toast } from 'react-toastify'
+
+// Componente de carga (spinner).
+// Componente de carregamento (spinner).
 import Spinner from '../components/Spinner'
 
+// Estructura inicial del formulario.
+// Estrutura inicial do formulário.
 const initialForm = {
   nombre: '',
   apellido: '',
@@ -16,6 +30,8 @@ const initialForm = {
   situacaoSocial: ''
 }
 
+// Componente principal de la pantalla de beneficiarios.
+// Componente principal da tela de beneficiários.
 export default function BeneficiariosScreen() {
   const [beneficiarios, setBeneficiarios] = useState([])
   const [formData, setFormData] = useState(initialForm)
@@ -23,10 +39,14 @@ export default function BeneficiariosScreen() {
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
 
+  // Al cargar el componente, busca la lista de beneficiarios.
+  // Ao carregar o componente, busca a lista de beneficiários.
   useEffect(() => {
     fetchBeneficiarios()
   }, [])
 
+  // 🔄 Cargar beneficiarios desde la API.
+  // 🔄 Carrega beneficiários da API.
   async function fetchBeneficiarios() {
     setLoading(true)
     try {
@@ -39,14 +59,17 @@ export default function BeneficiariosScreen() {
     }
   }
 
+  // Actualiza el valor del formulario a medida que se escribe.
+  // Atualiza os valores do formulário conforme o usuário digita.
   function handleChange(e) {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
+  // Guardar nuevo o editar beneficiario existente.
+  // Salva um novo ou edita um beneficiário existente.
   async function handleSubmit(e) {
     e.preventDefault()
-    // validación básica
     const empty = Object.entries(formData).some(([_, v]) => !v)
     if (empty) return toast.warn('Completa todos los campos')
 
@@ -69,6 +92,8 @@ export default function BeneficiariosScreen() {
     }
   }
 
+  // Llena el formulario con los datos de un beneficiario para editar.
+  // Preenche o formulário com os dados de um beneficiário para edição.
   function handleEditar(b) {
     setFormData({
       nombre: b.nombre,
@@ -85,6 +110,8 @@ export default function BeneficiariosScreen() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // Elimina un beneficiario con confirmación.
+  // Remove um beneficiário com confirmação.
   async function handleExcluir(id) {
     if (!window.confirm('¿Eliminar este beneficiario?')) return
     setLoading(true)
@@ -103,11 +130,14 @@ export default function BeneficiariosScreen() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <h2 className="text-2xl font-semibold">Gestionar Beneficiarios</h2>
 
-      {/* Formulario */}
+      {/* 📝 Formulario para crear o editar beneficiarios */}
+      {/* 📝 Formulário para criar ou editar beneficiários */}
       <form
         onSubmit={handleSubmit}
         className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-6 rounded shadow"
       >
+        {/* Mapea campos de forma dinámica */}
+        {/* Mapeia campos de forma dinâmica */}
         {[
           { label: 'Nombre', name: 'nombre', type: 'text' },
           { label: 'Apellido', name: 'apellido', type: 'text' },
@@ -131,6 +161,8 @@ export default function BeneficiariosScreen() {
           </div>
         ))}
 
+        {/* Botón de acción guardar o crear */}
+        {/* Botão de ação: salvar ou criar */}
         <button
           type="submit"
           disabled={saving}
@@ -144,7 +176,8 @@ export default function BeneficiariosScreen() {
         </button>
       </form>
 
-      {/* Tabla */}
+      {/* 📋 Tabla con la lista de beneficiarios */}
+      {/* 📋 Tabela com a lista de beneficiários */}
       <section>
         <h3 className="text-xl font-medium mb-4">Lista de Beneficiarios</h3>
         {loading ? (
@@ -203,11 +236,3 @@ export default function BeneficiariosScreen() {
                     </td>
                   </tr>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </section>
-    </div>
-  )
-}

@@ -1,54 +1,70 @@
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose();
-const fs = require('fs');
-const path = require('path');
+// backend/index.js
 
-const app = express();
-const PORT = 3001;
+// 📦 Carga variables de entorno desde .env (por ejemplo: SECRET_KEY, PORT)
+// 📦 Carrega variáveis de ambiente do .env (ex: SECRET_KEY, PORT)
+require('dotenv').config()
 
-// Middlewares
-app.use(cors());
-app.use(bodyParser.json());
+// 🚀 Importa los módulos principales del backend
+// 🚀 Importa os principais módulos do backend
+const express    = require('express')
+const cors       = require('cors')
+const bodyParser = require('body-parser')
 
-// Ruta absoluta al archivo init.sql
-const initSQL = fs.readFileSync(path.join(__dirname, 'db', 'init.sql'), 'utf8');
+// 🔗 Conexión con la base de datos, que se inicializa al importar 'db.js'
+// 🔗 Conexão com o banco de dados, que é inicializado ao importar 'db.js'
+const db = require('./db')
 
-// Conexión y creación automática de base de datos y tablas
-const db = new sqlite3.Database('./db/database.sqlite', (err) => {
-  if (err) return console.error('❌ Erro ao conectar com SQLite', err.message);
-  console.log('✅ SQLite conectado.');
+// 🛠️ Crea una instancia de aplicación Express
+// 🛠️ Cria uma instância da aplicação Express
+const app  = express()
 
-  db.exec(initSQL, (err) => {
-    if (err) return console.error('❌ Erro ao inicializar DB:', err.message);
-    console.log('✅ Estrutura do banco verificada.');
+// 📡 Define el puerto desde env o usa 3001 por defecto
+// 📡 Define a porta a partir do .env ou usa 3001 como padrão
+const PORT = process.env.PORT || 3001
 
-    // Inserir usuário admin se não existir
-    db.run(
-      `INSERT OR IGNORE INTO users (username, email, password, role)
-       VALUES ('admin', 'admin@admin.com', 'admin', 'admin')`,
-      (err) => {
-        if (err) return console.error('❌ Erro ao inserir admin:', err.message);
-        console.log('✅ Usuário admin verificado/inserido.');
-      }
-    );
-  });
-});
+// ====================
+// 🧩 Middlewares
+// ====================
 
-// Rotas
-const userRoutes = require('./routes/users');
-const beneficiarioRoutes = require('./routes/beneficiarios');
+// Habilita CORS solo para 'localhost:3000' y permite cookies/sesión (credentials)
+// Habilita CORS apenas para 'localhost:3000' e permite cookies/sessão (credentials)
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+  })
+)
 
-app.use('/users', userRoutes);
-app.use('/beneficiarios', beneficiarioRoutes);
+// Permite recibir datos en formato JSON en las solicitudes
+// Permite receber dados no formato JSON nas requisições
+app.use(bodyParser.json())
 
-// Teste de rota
-app.get('/', (req, res) => {
-  res.send('API funcionando...');
-});
+// ====================
+// 🔀 Rutas / Routes
+// ====================
 
-// Inicia servidor
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor backend rodando em http://localhost:${PORT}`);
-});
+// Módulo de autenticación y usuarios (registro, login)
+// Módulo de autenticação e usuários (registro, login)
+app.use('/users', require('./routes/users'))
+
+// Módulo de beneficiarios (CRUD completo)
+// Módulo de beneficiários (CRUD completo)
+app.use('/beneficiarios', require('./routes/beneficiarios'))
+
+// ====================
+// ❤️ Health-check simple
+// ====================
+
+// Ruta raíz para verificar si la API está en línea
+// Rota raiz para verificar se a API está online
+app.get('/', (req, res) => res.send('API funcionando…'))
+
+// ====================
+// 🚀 Inicia el servidor
+// ====================
+
+// Inicia el servidor escuchando en el puerto definido
+// Inicia o servidor escutando na porta definida
+app.listen(PORT, () =>
+  console.log(`🚀 Backend en http://localhost:${PORT}`)
+)
