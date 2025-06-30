@@ -91,7 +91,6 @@ function App() {
       <Routes>
         <Route path="/" element={<DashboardScreen beneficiarios={beneficiarios} />} />
         <Route path="/beneficiarios" element={<BeneficiariosScreen />} />
-        <Route path="/cadastrar" element={<CadastrarScreen />} />
         <Route path="/sobre" element={<SobreScreen />} />
       </Routes>
 

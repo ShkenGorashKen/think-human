@@ -1,39 +1,58 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Home, Users, Info, CirclePlus, LogOut } from 'lucide-react';
-import logo from '../assets/logo.png';
+// src/components/Navbar.jsx
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Home, Users, Info, LogOut } from 'lucide-react'
+import logo from '../assets/logo.png'
 
-function Navbar({ onLogout }) {
+export default function Navbar({ onLogout }) {
   return (
-    <header className="bg-blue-700 text-white px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      <div className="flex items-center gap-4">
-        <img src={logo} alt="Logo" className="h-10 w-auto" />
-        <h1 className="text-xl font-bold">Think Human Foundation</h1>
+    <header className="shadow-md">
+      {/* Barra superior */}
+      <div className="bg-blue-800 h-24 flex items-center">
+        <div className="container mx-auto flex items-center justify-between px-6">
+          {/* Logo + Título */}
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="Logo" className="h-16 w-auto" />
+            <h1 className="text-3xl font-semibold text-white">
+              Think Human Foundation
+            </h1>
+          </div>
+          {/* Botón “Sair” */}
+          <button
+            onClick={onLogout}
+            type="button"
+            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors"
+          >
+            <LogOut size={20} />
+            <span className="font-medium">Sair</span>
+          </button>
+        </div>
       </div>
 
-      <nav className="flex gap-4 flex-wrap items-center">
-        <Link to="/" className="flex items-center gap-1 hover:underline">
-          <Home size={18} /> Home
-        </Link>
-        <Link to="/beneficiarios" className="flex items-center gap-1 hover:underline">
-          <Users size={18} /> Beneficiários
-        </Link>
-        <Link to="/sobre" className="flex items-center gap-1 hover:underline">
-          <Info size={18} /> Sobre
-        </Link>
-        <Link to="/cadastrar" className="flex items-center gap-1 hover:underline">
-          <CirclePlus size={18} /> Cadastrar
-        </Link>
-        <button
-          onClick={onLogout}
-          className="flex items-center gap-1 bg-red-500 hover:bg-red-600 px-3 py-1 rounded"
-          type="button"
+      {/* Barra inferior: enlaces más separados y grandes */}
+      <nav className="bg-blue-700 text-white flex justify-center space-x-20 px-6 py-4">
+        <Link
+          to="/"
+          className="flex flex-col items-center hover:text-blue-300 transition-colors"
         >
-          <LogOut size={18} /> Sair
-        </button>
+          <Home size={32} />
+          <span className="mt-1 text-base">Home</span>
+        </Link>
+        <Link
+          to="/beneficiarios"
+          className="flex flex-col items-center hover:text-blue-300 transition-colors"
+        >
+          <Users size={32} />
+          <span className="mt-1 text-base">Beneficiários</span>
+        </Link>
+        <Link
+          to="/sobre"
+          className="flex flex-col items-center hover:text-blue-300 transition-colors"
+        >
+          <Info size={32} />
+          <span className="mt-1 text-base">Sobre</span>
+        </Link>
       </nav>
     </header>
-  );
+  )
 }
-
-export default Navbar;
